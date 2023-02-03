@@ -180,13 +180,10 @@ public class Design extends JFrame{
 		rightLabel.setHorizontalAlignment(JLabel.CENTER);
 		rightLabel.setVerticalAlignment(JLabel.BOTTOM);
 		rightLabel.setFont(new Font("Arial", Font.PLAIN, 20));
-		rightLabel.setText("<html>Design Mode!<br/><br/>-Select the button <br/>you wish to add<br/>to your grid<br/> for play mode!<br/><br/>-Press 'Submit'<br/> when are done!</html>");
+		rightLabel.setText("<html>Design Mode!<br/><br/>-Select the tile<br/>you wish to add<br/>to your grid<br/> for play mode!<br/><br/>-Press 'Submit'<br/> when are done!</html>");
 		rightLabel.setForeground(Color.black);
 		buttons.designButtons(rightPanel, frame);
 		rightPanel.add(rightLabel);
-		
-		//button object after rightlabel creation
-		//buttons.countdown(clockLabel, rightLabel);
 		
 		
 		
