@@ -1,18 +1,24 @@
 package picross;
 
-import java.awt.Font;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+/**
+ * @author Thomas Stanley
+ * Class contains all buttons and button functionality for both Design
+ * and Play modes.
+ */
 public class Controller extends JFrame implements ActionListener{
 	
+	/*
+	 * required serial#
+	 */
 	private static final long serialVersionUID = 1L;
 	
 	int[][] grid = new int[5][5];
@@ -46,6 +52,9 @@ public class Controller extends JFrame implements ActionListener{
 	
 	JButton designSubmit = new JButton();
 	
+	/**
+	 * Empty Class Constructor
+	 */
 	public Controller(){
 		
 	}
@@ -119,10 +128,15 @@ public class Controller extends JFrame implements ActionListener{
 	}
 	
 	
+	/**
+	 * @param panel Center Panel passed from Design Mode
+	 * @param frame Design Frame, used to close design window upon 'Submit' button click
+	 * The method that contain the action listener for the "Submit" button in design mode.
+	 */
 	public void designButtons(JPanel panel, JFrame frame) {
-		boolean isDesigned = true;
+		
 		designSubmit.setText("Submit");
-		panel.add(designSubmit);
+		panel.add(designSubmit, BorderLayout.SOUTH);
 		
 		designSubmit.addActionListener(new ActionListener(){
 			
@@ -137,17 +151,22 @@ public class Controller extends JFrame implements ActionListener{
 	}
 		
 	//countdown panel
-	public void countdown(JLabel label, JLabel rightLabel) {
+	/**
+	 * @param label Label passed from both Design and Play modes.
+	 * The method that runs the countdown clock in the clock panel.
+	 * Uses an action listener to change time, and can also have events
+	 * happen at certain times of play.
+	 */
+	public void countdown(JLabel label) {
 		Timer timer = new Timer(1000, new ActionListener() {
 			
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				second--;
-				label.setText("00:"+second);
-				if(second < 50) {
-					
 				
+				label.setText("00:"+second);
+				if(second>0) {
+				second--;
 				}
 				
 			}
@@ -158,6 +177,13 @@ public class Controller extends JFrame implements ActionListener{
 	}
 	
 	
+	/**
+	 * This method is used in Controller class to create button details of center panel of both Design and Play modes
+	 * @param panel Center panel passed
+	 * @param button Button passed from controller class
+	 * @param x Row of 2d Array
+	 * @param y Column of 2d Array
+	 */
 	public void buttonDetails(JPanel panel,JButton button,int x, int y) {
 		button.addActionListener(new ActionListener() {
 

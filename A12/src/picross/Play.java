@@ -6,26 +6,35 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
-
+import java.net.URL;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
 
+/**
+ * @author Thomas Stanley
+ *	Play class where the user plays the main game. A new frame is opened with
+ *	the design grid loaded in if created.
+ */
 public class Play {
 	
 
 	/**
-	 * 
+	 * required Serial #
 	 */
 	private static final long serialVersionUID = 3L;
-	/**
-	 * 
-	 */
 	
 
+	/**
+	 * If the grid is designed, it is passed here, or if the user goes straight to play mode, a default grid is used.
+	 * @param designGrid The design grid pass from design frame, or the blank grid if not.
+	 * @param isDesigned Boolean value for if the grid is user designed or not.
+	 */
 	public Play(int[][] designGrid, boolean isDesigned){
 		
 		Controller buttons = new Controller();
@@ -51,13 +60,13 @@ public class Play {
 		
 		JPanel topPanel = new JPanel();
 		topPanel.setLayout(new BorderLayout());
+		JPanel topNums = new JPanel();
+		topNums.setLayout(new GridLayout());
+		topNums.setFont(new Font("Arial", Font.PLAIN, 42));
 		
 		JPanel clockPanel = new JPanel();
 		
 		JPanel logoPanel = new JPanel();
-		
-		JPanel topNums = new JPanel();
-		topNums.setLayout(new GridLayout());
 		
 		JPanel leftPanel = new JPanel();
 		leftPanel.setLayout(new GridLayout(5,1));
@@ -66,16 +75,21 @@ public class Play {
 		centerPanel.setLayout(new GridLayout(5,5));
 		
 		JPanel rightPanel = new JPanel();
-		
+		rightPanel.setLayout(new BorderLayout(10,10));
+		JPanel scorePanel = new JPanel();
 		
 		
 		
 		//panel colouring
 		leftPanel.setBackground(new Color(106, 88, 188));
 		centerPanel.setBackground(new Color(85, 54, 217));
+		
 		topPanel.setBackground(new Color(106, 88, 188));
 		topNums.setBackground(new Color(106, 88, 188));
+		
 		rightPanel.setBackground(new Color(106, 88, 188));
+		scorePanel.setBackground(Color.black);
+		
 		clockPanel.setBackground(new Color(106, 88, 188));
 		logoPanel.setBackground(new Color(106, 88, 188));
 		
@@ -95,6 +109,7 @@ public class Play {
 		topPanel.add(clockPanel);
 		
 		rightPanel.setPreferredSize(new Dimension(175,100));
+		scorePanel.setPreferredSize(new Dimension(150,80));
 		
 		leftPanel.setPreferredSize(new Dimension(175,100));
 		
@@ -106,7 +121,8 @@ public class Play {
 		
 		//logo panel
 		Border border = BorderFactory.createLineBorder(new Color(25,25, 87), 3, true);
-		ImageIcon logo = new ImageIcon("src/images/piccross2.png");
+		URL logoURL = Game.class.getResource("/images/piccross2.png");
+		ImageIcon logo = new ImageIcon(logoURL);
 		Image logoResize = logo.getImage();
 		Image newLogo = logoResize.getScaledInstance(175, 100, java.awt.Image.SCALE_DEFAULT);
 		ImageIcon logo2 = new ImageIcon(newLogo);
@@ -120,7 +136,7 @@ public class Play {
 		//clock panel creation
 		JLabel clockLabel = new JLabel();
 		clockLabel.setForeground(Color.black);
-		clockLabel.setVerticalTextPosition(JLabel.CENTER);
+		clockLabel.setVerticalAlignment(JLabel.CENTER);
 		clockLabel.setFont(new Font("Bad Signal", Font.PLAIN, 42));
 		clockPanel.setBorder(border);
 		clockPanel.add(clockLabel);
@@ -131,48 +147,38 @@ public class Play {
 		
 		//left panel label creation
 		JLabel leftLabel1 = new JLabel();
-		leftLabel1.setBorder(border);
-		leftPanel.add(leftLabel1);
+		numberLabelCreation(leftLabel1, leftPanel, border);
 		
 		JLabel leftLabel2 = new JLabel();
-		leftLabel2.setBorder(border);
-		leftPanel.add(leftLabel2);
+		numberLabelCreation(leftLabel2, leftPanel, border);
 		
 		
 		JLabel leftLabel3 = new JLabel();
-		leftLabel3.setBorder(border);
-		leftPanel.add(leftLabel3);
+		numberLabelCreation(leftLabel3, leftPanel, border);
 		
 		
 		JLabel leftLabel4 = new JLabel();
-		leftLabel4.setBorder(border);
-		leftPanel.add(leftLabel4);
+		numberLabelCreation(leftLabel4, leftPanel, border);
 		
 		JLabel leftLabel5 = new JLabel();
-		leftLabel5.setBorder(border);
-		leftPanel.add(leftLabel5);
+		numberLabelCreation(leftLabel5, leftPanel, border);
 		
 		
 		//top panel label adding
 		JLabel topNumsLabel1 = new JLabel();
-		topNumsLabel1.setBorder(border);
-		topNums.add(topNumsLabel1);
+		numberLabelCreation(topNumsLabel1, topNums, border);
 		
 		JLabel topNumsLabel2 = new JLabel();
-		topNumsLabel2.setBorder(border);
-		topNums.add(topNumsLabel2);
+		numberLabelCreation(topNumsLabel2, topNums, border);
 		
 		JLabel topNumsLabel3 = new JLabel();
-		topNumsLabel3.setBorder(border);
-		topNums.add(topNumsLabel3);
+		numberLabelCreation(topNumsLabel3, topNums, border);
 		
-		JLabel topPanelLabel4 = new JLabel();
-		topPanelLabel4.setBorder(border);
-		topNums.add(topPanelLabel4);
+		JLabel topNumsLabel4 = new JLabel();
+		numberLabelCreation(topNumsLabel4, topNums, border);
 		
-		JLabel topPanelLabel5 = new JLabel();
-		topPanelLabel5.setBorder(border);
-		topNums.add(topPanelLabel5);
+		JLabel topNumsLabel5 = new JLabel();
+		numberLabelCreation(topNumsLabel5, topNums, border);
 		
 		topPanel.add(clockPanel, BorderLayout.EAST);
 		topPanel.add(logoPanel, BorderLayout.WEST);
@@ -180,17 +186,27 @@ public class Play {
 		
 		
 		//right panel label creation
-		rightPanel.setBorder(border);
-		JLabel rightLabel = new JLabel();
-		rightLabel.setHorizontalAlignment(JLabel.CENTER);
-		rightLabel.setVerticalAlignment(JLabel.TOP);
-		rightLabel.setFont(new Font("Arial", Font.PLAIN, 20));
-		rightLabel.setForeground(Color.black);
-		rightPanel.add(rightLabel);
+		rightPanel.setBorder(new CompoundBorder(
+				border,
+				BorderFactory.createEmptyBorder(10, 10, 10, 10)
+				));
+		
+		scorePanel.setBorder(BorderFactory.createLineBorder(Color.white,3));
+		scorePanel.setBackground(Color.black);
+		JLabel scoreLabel = new JLabel();
+		scoreLabel.setFont(new Font("Arial", Font.BOLD, 24));
+		scoreLabel.setForeground(Color.white);
+		scoreLabel.setText("Score:");
+		
+		JButton submit = new JButton("Submit");
+		scorePanel.add(scoreLabel);
+		
+		rightPanel.add(submit, BorderLayout.SOUTH);
+		rightPanel.add(scorePanel, BorderLayout.CENTER);
 		
 		
 		//button object after rightlabel creation
-		buttons.countdown(clockLabel, rightLabel);
+		buttons.countdown(clockLabel);
 		
 		
 		
@@ -200,10 +216,27 @@ public class Play {
 		frame.add(leftPanel, BorderLayout.WEST);
 		frame.add(centerPanel, BorderLayout.CENTER);
 		
-//		frame.pack();
+	//	frame.pack();
 		frame.setVisible(true);
 	
 	}
+	
+	/*
+	 * Method for creating labels in fewer lines. 
+	 */
+	void numberLabelCreation(JLabel label, JPanel panel, Border border) {
+		label.setForeground(Color.BLACK);
+		label.setFont(new Font("Arial", Font.PLAIN, 40));
+		label.setText("(2)");
+		label.setHorizontalAlignment(JLabel.CENTER);
+		label.setBorder(border);
+		panel.add(label);
+	}
+	
+	/*
+	 * Method creates a default playing grid if not designed beforehand.
+	 * Returns playing grid to be used for the class.
+	 */
 	int[][] mapGrid(boolean isDesigned, int[][] designGrid, int[][] defaultGrid) {
 		if(!isDesigned) {
 			defaultGrid[0][2]=1;

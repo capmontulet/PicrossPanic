@@ -1,45 +1,53 @@
 package picross;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
-import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
+import java.net.URL;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.border.Border;
 
+/**
+ * @author Thomas Stanley
+ * Main class extends JFrame
+ *
+ */
 public class Game extends JFrame{
 	
+	/**
+	 * Required serial#
+	 */
+	private static final long serialVersionUID = 1L;
+
 	Game(){
 		
 	}
 	
+	/**
+	 * @param args Arguments given
+	 * @throws IOException
+	 * main Class creates Launcher with options for English and German,
+	 * and Design and Play modes.
+	 */
 	public static void main(String[] args) throws IOException{
 		
 		// TODO Auto-generated method stub
 		JFrame frame = new JFrame();
-		try {
-            frame.setContentPane(new JLabel(new ImageIcon(ImageIO.read(new File("src/images/launcherBack2.png")))));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-  
 		
-		Border border = BorderFactory.createLineBorder(new Color(25,25, 87), 3, true);
+		
+		URL bgURL = Game.class.getResource("/images/launcherBack2.png");
+		ImageIcon bg = new ImageIcon(bgURL);
+        frame.setContentPane(new JLabel(bg));
+      
+  
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(450,250);
 		frame.setLocationRelativeTo(null);
@@ -51,13 +59,15 @@ public class Game extends JFrame{
 		ImageIcon icon = new ImageIcon("src/images/logo.png");
 		frame.setIconImage(icon.getImage());
 		
-		
-		JPanel testPanel = new JPanel();
-		testPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 5));
-		testPanel.setOpaque(false);
+		//creating button panel
+		JPanel launcherPanel = new JPanel();
+		launcherPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 5));
+		launcherPanel.setOpaque(false);
 		JButton design = new JButton("Design");
 		design.setPreferredSize(new Dimension(85,45));
-		design.setFont(new Font("Bad Signal", Font.BOLD, 15));
+		design.setFont(new Font("Arial", Font.BOLD, 15));
+		
+		//design option opens new Design frame
 		design.addActionListener(new ActionListener() {
 
 			@Override
@@ -67,6 +77,8 @@ public class Game extends JFrame{
 			}
 			
 		});
+		
+		//play option opens new Play frame
 		JButton play = new JButton("Play");
 		play.setPreferredSize(new Dimension(85,45));
 		play.setFont(new Font("Bad Signal", Font.BOLD, 15));
@@ -79,10 +91,30 @@ public class Game extends JFrame{
 			}
 			
 		});
-		testPanel.add(design);
-		testPanel.add(play);
 		
-		frame.add(testPanel, BorderLayout.SOUTH);
+		
+		//radio button creation for localisation
+		JRadioButton eng = new JRadioButton("English");
+		JRadioButton ger = new JRadioButton("German");
+		
+		URL engURL = Game.class.getResource("/images/realengflag.gif");
+		ImageIcon engFlag= new ImageIcon(engURL);
+		
+		URL gerURL = Game.class.getResource("/images/piciconger.gif");
+		ImageIcon gerFlag= new ImageIcon(gerURL);
+		
+		eng.setIcon(engFlag);
+		ger.setIcon(gerFlag);
+		
+		
+		launcherPanel.add(ger, FlowLayout.LEFT);
+		launcherPanel.add(eng);
+		
+		launcherPanel.add(design);
+		launcherPanel.add(play);
+		
+		frame.add(launcherPanel, BorderLayout.SOUTH);
+		
 		frame.pack();
 		frame.setVisible(true);
 		

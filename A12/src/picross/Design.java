@@ -6,29 +6,41 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.net.URL;
+
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
 
+
+/**
+ * @author Thomas Stanley
+ * Design class presents users with the play board to create a new grid to play with.
+ * Submit button closes the design window and opens a new 'Play'
+ * frame with player-made grid initialised.
+ */
 public class Design extends JFrame{
 
 	/**
-	 * 
+	 * required serial #
 	 */
 	private static final long serialVersionUID = 2L;
-	/**
-	 * 
-	 */
 	
 
+	/**
+	 * Design class presents users with the play board to create a new grid to play with.
+	 * Submit button closes the design window and opens a new 'Play'
+	 * frame with player-made grid initialised.
+	 */
 	public Design(){
+		
 		
 		//new Game object
 		Controller buttons = new Controller();
-		
 		
 		
 		JFrame frame = new JFrame();
@@ -61,6 +73,7 @@ public class Design extends JFrame{
 		centerPanel.setLayout(new GridLayout(5,5));
 		
 		JPanel rightPanel = new JPanel();
+		rightPanel.setLayout(new BorderLayout(10,10));
 		
 		
 		
@@ -101,7 +114,8 @@ public class Design extends JFrame{
 		
 		//logo panel
 		Border border = BorderFactory.createLineBorder(new Color(25,25, 87), 3, true);
-		ImageIcon logo = new ImageIcon("src/images/piccross2.png");
+		URL logoURL = Game.class.getResource("/images/piccross2.png");
+		ImageIcon logo = new ImageIcon(logoURL);
 		Image logoResize = logo.getImage();
 		Image newLogo = logoResize.getScaledInstance(175, 100, java.awt.Image.SCALE_DEFAULT);
 		ImageIcon logo2 = new ImageIcon(newLogo);
@@ -175,7 +189,10 @@ public class Design extends JFrame{
 		
 		
 		//right panel label creation
-		rightPanel.setBorder(border);
+		rightPanel.setBorder(new CompoundBorder(
+				border,
+				BorderFactory.createEmptyBorder(10, 10, 10, 10)
+				));
 		JLabel rightLabel = new JLabel();
 		rightLabel.setHorizontalAlignment(JLabel.CENTER);
 		rightLabel.setVerticalAlignment(JLabel.BOTTOM);
@@ -183,7 +200,7 @@ public class Design extends JFrame{
 		rightLabel.setText("<html>Design Mode!<br/><br/>-Select the tile<br/>you wish to add<br/>to your grid<br/> for play mode!<br/><br/>-Press 'Submit'<br/> when are done!</html>");
 		rightLabel.setForeground(Color.black);
 		buttons.designButtons(rightPanel, frame);
-		rightPanel.add(rightLabel);
+		rightPanel.add(rightLabel, BorderLayout.NORTH);
 		
 		
 		

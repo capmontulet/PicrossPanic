@@ -18,9 +18,9 @@ SET JARNAME=Game.jar
 SET JAROUT=Main-jar.out
 SET JARERR=-jar.err
 SET DOCDIR=doc
-SET DOCPACK=game
-SET DOCOUT=game-javadoc.out
-SET DOCERR=game-javadoc.err
+SET DOCPACK=picross
+SET DOCOUT=picross-javadoc.out
+SET DOCERR=picross-javadoc.err
 SET MAINCLASSSRC=src/picross/Game.java
 SET MAINCLASSBIN=picross.Game
 
@@ -61,7 +61,11 @@ ECHO "2. Creating Jar ..................."
 cd bin
 jar cvfe %JARNAME% %MAINCLASSBIN% . > %JAROUT% 2> %JARERR%
 
+ECHO "3. Creating Javadoc ..............."
+cd ..
+javadoc -d %DOCDIR% -sourcepath %SRCDIR% -subpackages %DOCPACK% > %DOCOUT% 2> %DOCERR%
 
+cd bin
 ECHO "4. Running Jar ...................."
 java -jar %JARNAME%
 cd ..

@@ -1,4 +1,0 @@
-src\picross\Game.java:25: warning: [serial] serializable class Game has no definition of serialVersionUID
-public class Game extends JFrame{
-       ^
-1 warning
