@@ -1,0 +1,4 @@
+src\picross\View.java:19: warning: [serial] serializable class View has no definition of serialVersionUID
+public class View extends JFrame implements ActionListener{
+       ^
+1 warning

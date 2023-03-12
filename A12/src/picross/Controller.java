@@ -1,8 +1,18 @@
 package picross;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.concurrent.TimeUnit;
+
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -21,110 +31,32 @@ public class Controller extends JFrame implements ActionListener{
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	int[][] grid = new int[5][5];
-	int second=15;
+	View myView = new View();
+	Model myModel = new Model();
 	
-	JButton zeroZero = new JButton();
-	JButton zeroOne = new JButton();
-	JButton zeroTwo = new JButton();
-	JButton zeroThree = new JButton();
-	JButton zeroFour = new JButton();
-	JButton oneZero = new JButton();
-	JButton oneOne = new JButton();
-	JButton oneTwo = new JButton();
-	JButton oneThree = new JButton();
-	JButton oneFour = new JButton();
-	JButton twoZero = new JButton();
-	JButton twoOne = new JButton();
-	JButton twoTwo = new JButton();
-	JButton twoThree = new JButton();
-	JButton twoFour = new JButton();
-	JButton threeZero = new JButton();
-	JButton threeOne = new JButton();
-	JButton threeTwo = new JButton();
-	JButton threeThree = new JButton();
-	JButton threeFour = new JButton();
-	JButton fourZero = new JButton();
-	JButton fourOne = new JButton();
-	JButton fourTwo = new JButton();
-	JButton fourThree = new JButton();
-	JButton fourFour = new JButton();
+	JButton buttonArr[][] = new JButton[5][5];
+	
 	
 	JButton designSubmit = new JButton();
+	JButton playSubmit = new JButton();
+
+	
 	
 	/**
 	 * Empty Class Constructor
 	 */
 	public Controller(){
 		
+		
 	}
 	
-	//center button creation
-	void CenterPanelButtons(JPanel panel){
-
-	
-	//1st row
-	buttonDetails(panel, zeroZero,0,0);
-
-	buttonDetails(panel, zeroOne,0,1);
-
-	buttonDetails(panel, zeroTwo,0,2);
-
-	buttonDetails(panel, zeroThree,0,3);
-	
-	buttonDetails(panel, zeroFour, 0,4);
-	
-
-	//second row
-	
-	buttonDetails(panel, oneZero, 1,0);
-		
-	buttonDetails(panel, oneOne,1,1);
-	
-	buttonDetails(panel, oneTwo,1,2);
-	
-	buttonDetails(panel, oneThree,1,3);
-	
-	buttonDetails(panel, oneFour,1,4);
+	public void start(){
+		myView.splash();
+	}
 	
 	
-	//third row
-	buttonDetails(panel, twoZero,2,0);
-	
-	buttonDetails(panel, twoOne,2,1);
-	
-	buttonDetails(panel, twoTwo,2,2);
-	
-	buttonDetails(panel, twoThree,2,3);
-	
-	buttonDetails(panel, twoFour,2,4);
-	
-	
-	//fourth row
-	buttonDetails(panel, threeZero,3,0);
-	
-	buttonDetails(panel, threeOne,3,1);
-	
-	buttonDetails(panel, threeTwo,3,2);
-	
-	buttonDetails(panel, threeThree,3,3);
-	
-	buttonDetails(panel, threeFour,3,4);
-	
-	
-	//fifth row
-	buttonDetails(panel, fourZero,4,0);
-	
-	buttonDetails(panel, fourOne,4,1);
-	
-	buttonDetails(panel, fourTwo,4,2);
-	
-	buttonDetails(panel, fourThree,4,3);
-	
-	buttonDetails(panel, fourFour,4,4);
-	
-		
-	
+	public void launcherPlay() {
+		playMode(myModel.getGrid(), false, myModel);
 	}
 	
 	
@@ -133,7 +65,7 @@ public class Controller extends JFrame implements ActionListener{
 	 * @param frame Design Frame, used to close design window upon 'Submit' button click
 	 * The method that contain the action listener for the "Submit" button in design mode.
 	 */
-	public void designButtons(JPanel panel, JFrame frame) {
+	public void designSubmit(JPanel panel, JFrame frame) {
 		
 		designSubmit.setText("Submit");
 		panel.add(designSubmit, BorderLayout.SOUTH);
@@ -144,7 +76,50 @@ public class Controller extends JFrame implements ActionListener{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				frame.dispose();
-				Play play = new Play (grid, true);
+				playMode(myModel.getGrid(), true, myModel);
+			}
+			
+		});
+	}
+	
+	public void saveSubmit(JPanel panel, JFrame frame) {
+		
+		designSubmit.setText("Save");
+		panel.add(designSubmit, BorderLayout.SOUTH);
+		
+		designSubmit.addActionListener(new ActionListener(){
+			
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				frame.dispose();
+				saveToFile(myModel.getGrid(), "Saved Grid"+Integer.toString(myModel.savedGridFileNum)+".csv");
+				myModel.savedGridFileNum++;
+				myView.launcher();
+			}
+			
+		});
+	}
+	
+	public void playSubmit(JPanel panel, JFrame frame, Model model) {
+
+		playSubmit.setText("Submit");
+		panel.add(playSubmit, BorderLayout.SOUTH);
+		
+		playSubmit.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(gridCompare(myModel.getGrid(), model.getGrid())) {
+					
+					model.finalScore=myModel.getSecond()*model.score;
+            		myModel.scoreLabel.setText(myModel.scoreLabel.getText()+"<br/>You Win!<br/>Final Score:<br/>"+model.finalScore+"<br/>Returning...");
+            		
+				}else {
+            		myModel.scoreLabel.setText(myModel.scoreLabel.getText()+"Try Again!!<br/>");
+
+				}
+				
 			}
 			
 		});
@@ -164,16 +139,19 @@ public class Controller extends JFrame implements ActionListener{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				label.setText("00:"+second);
-				if(second>0) {
-				second--;
+				if(myModel.getSecond()>=10) {
+					label.setText("00:"+myModel.getSecond());
+				}else if(myModel.getSecond()<10){
+					label.setText("00:0"+myModel.getSecond());
+				}
+				if(myModel.getSecond()>0) {
+				myModel.setSecond(myModel.getSecond() - 1);
 				}
 				
 			}
 			
 		});
 		timer.start();
-		
 	}
 	
 	
@@ -184,23 +162,126 @@ public class Controller extends JFrame implements ActionListener{
 	 * @param x Row of 2d Array
 	 * @param y Column of 2d Array
 	 */
-	public void buttonDetails(JPanel panel,JButton button,int x, int y) {
-		button.addActionListener(new ActionListener() {
+	public void buttonDetails(JPanel panel, boolean isPlay,Model model) {
+	    for(int row = 0; row < buttonArr.length; row++) {
+	        for(int col = 0; col < buttonArr[row].length; col++) {
+	            final int r = row;
+	            final int c = col;
+	            buttonArr[row][col]=new JButton();
+	            buttonArr[row][col].setBackground((new Color(176, 144, 245)));
+	            buttonArr[row][col].setBorder(BorderFactory.createBevelBorder(1,new Color(25,25, 87),new Color(106, 88, 188)));
+	            
+	            buttonArr[row][col].addActionListener(new ActionListener() {
+	                @Override
+	                public void actionPerformed(ActionEvent e) {
+	                	myModel.getGrid()[r][c]=1;
+         
+               
+	                	if(isPlay==true){
+	                		//if the play grid element is a 0, the empty grid will be set back to 0.
+	                		//This makes it easier to identify a win condition,
+	                		//as the two arrays will be completely the same if the correct tiles
+	                		//are selected
+	                		if(model.getPlayGrid()[r][c]==0) {
+	                			myModel.getGrid()[r][c]=0;
+	                		}
+	                		if(model.getPlayGrid()[r][c]==myModel.getGrid()[r][c] && model.getPlayGrid()[r][c]==1) {
+	                    		model.score+=100;
+	                    		myModel.increaseTime();
+	                    		buttonArr[r][c].setEnabled(false);
+	                    		buttonArr[r][c].setBackground(new Color(25,25, 87));
+	                    		//System.out.println(model.score);
+	                    		myModel.scoreLabel.setText(myModel.scoreLabel.getText()+model.score+"<br/>");
+	                    	}else {
+	                    		myModel.decreaseTime();
+	                    	}
+	                	}else {
+	                		buttonArr[r][c].setEnabled(false);
+                    		buttonArr[r][c].setBackground(new Color(25,25, 87));
+	                	}
+	                }
+	                
+	            });
+	            panel.add(buttonArr[row][col]);
+	        }
+	    }
+	}
+	
+	
+	
+	public void playMode(int[][] designGrid, boolean isDesigned, Model model) {
+		
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				grid[x][y]=1;
-			}
-			
-		});
-		panel.add(button);
+		model.setPlayGrid(model.mapGrid(isDesigned, designGrid, model.getGrid()));
+		myView.play(model);
 		
 	}
-
+	
+	
+	public String clueNum(boolean top, int z, int[][] grid) {
+	    int sum = 0;
+	    if (top) {
+	        for (int i = 0; i < grid.length; i++) {
+	            sum += grid[i][z];
+	        }
+	    } else {
+	        for (int j = 0; j < grid[z].length; j++) {
+	            sum += grid[z][j];
+	        }
+	    }
+	    return String.valueOf(sum);
+	}
+	
+	int[][] fileLoader(File file,Model myModel){
+	    try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+	        String line;
+	        int row = 0;
+	        while ((line = br.readLine()) != null) {
+	            String[] input = line.split(",");
+	            for (int i = 0; i < 5; i++) {
+	                myModel.getGrid()[row][i] = Integer.parseInt(input[i]);
+	            }
+	            row++;
+	        }
+	    } catch (Exception e) {
+	        System.out.println("Read from file error.");
+	        e.printStackTrace();
+	    }
+	    return myModel.getGrid();
+	}
+	
+	public void saveToFile(int[][] grid, String name) {
+	    try {
+	        Path filePath = Paths.get("src", "Saved Grids", name);
+	        FileWriter writer = new FileWriter(filePath.toString());
+	        for (int i = 0; i < grid.length; i++) {
+	            for (int j = 0; j < grid[i].length; j++) {
+	                writer.write(grid[i][j] + ",");
+	            }
+	            writer.write("\n");
+	        }
+	        writer.close();
+	    } catch (Exception e) {
+	        System.out.println("Save to file error.");
+	    }
+	}
+	
+	public boolean gridCompare(int[][] grid1, int[][] grid2) {
+	    for (int i = 0; i < 5; i++) {
+	        for (int j = 0; j < 5; j++) {
+	            if (grid1[i][j] != grid2[i][j]) {
+	                return false;
+	            }
+	        }
+	    }
+	    return true;	
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 	
 }
+	
+	

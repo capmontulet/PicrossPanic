@@ -1,0 +1,15 @@
+src\picross\Controller.java:161: error: @param name not found
+	 * @param button Button passed from controller class
+	          ^
+src\picross\Controller.java:162: error: @param name not found
+	 * @param x Row of 2d Array
+	          ^
+src\picross\Controller.java:163: error: @param name not found
+	 * @param y Column of 2d Array
+	          ^
+src\picross\Controller.java:165: warning: no @param for isPlay
+	public void buttonDetails(JPanel panel, boolean isPlay,Model model) {
+	            ^
+src\picross\Controller.java:165: warning: no @param for model
+	public void buttonDetails(JPanel panel, boolean isPlay,Model model) {
+	            ^
