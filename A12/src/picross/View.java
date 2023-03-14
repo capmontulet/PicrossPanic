@@ -18,10 +18,19 @@ import javax.swing.border.CompoundBorder;
 
 public class View extends JFrame implements ActionListener{
 
+	JLabel topLabels[] = new JLabel[5];
+	JLabel leftLabels[] = new JLabel[5];
+	private JFrame frame = new JFrame();
 	
+	Color borderColour = new Color(25,25, 87);
+	Color standardColour = new Color(106, 88, 188);
+	
+	
+	
+//	test = new Color(25,45, 87);
 	
 	public View() {
-		
+	
 		
 	}
 	
@@ -40,7 +49,7 @@ public class View extends JFrame implements ActionListener{
 		try {
 		    Thread.sleep(5000);
 		} catch (InterruptedException e) {
-		    e.printStackTrace();
+			System.out.println("Splash error");
 		}
 		splashWindow.setVisible(false);
 		splashWindow.dispose();
@@ -51,8 +60,10 @@ public class View extends JFrame implements ActionListener{
 	
 	public void launcher() {
 		Controller buttons = new Controller();
-		JFrame frame = new JFrame();
-		Border border = BorderFactory.createLineBorder(new Color(25,25, 87), 3, true);
+		
+			
+		
+		Border border = BorderFactory.createLineBorder(borderColour, 3, true);
 		
 		URL bgURL = Game.class.getResource("/images/launcherBack2.png");
 		ImageIcon bg = new ImageIcon(bgURL);
@@ -72,13 +83,34 @@ public class View extends JFrame implements ActionListener{
 		JMenu file = new JMenu("File");
 		JMenu help = new JMenu("Help");
 		JMenu edit = new JMenu("Edit");
-		JMenuItem changeCS = new JMenuItem("Change Colour Scheme");
+		JMenuItem changeBC = new JMenuItem("Change Border Colour");
+		JMenuItem changeLC = new JMenuItem("Change Label Colour");
 		JMenuItem loadGrid = new JMenuItem("Load Grid");
 		JMenuItem saveGrid = new JMenuItem("Save Grid");
 		JMenuItem exit = new JMenuItem("Exit");
 		JMenuItem howTo = new JMenuItem("How to Play");
 		
-		changeCS.addActionListener(this);
+		changeBC.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JColorChooser cc = new JColorChooser();
+				borderColour = cc.showDialog(null, "Border Colour Change", standardColour);
+				
+			}
+			
+		});
+		
+		changeLC.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JColorChooser cc = new JColorChooser();
+				standardColour = cc.showDialog(null, "Border Colour Change", standardColour);
+				
+			}
+			
+		});
 		
 		loadGrid.addActionListener(new ActionListener() {
 
@@ -88,7 +120,7 @@ public class View extends JFrame implements ActionListener{
 				int response = loader.showOpenDialog(null);
 				if(response==JFileChooser.APPROVE_OPTION) {
 					File filePicker = new File(loader.getSelectedFile().getAbsolutePath());
-					buttons.playMode(buttons.fileLoader(filePicker,buttons.myModel), true, buttons.myModel);
+					buttons.playMode(buttons.fileLoader(filePicker,buttons.myModel), true, false, buttons.myModel);
 				}
 				
 			}
@@ -120,13 +152,13 @@ public class View extends JFrame implements ActionListener{
 		    public void actionPerformed(ActionEvent e) {
 		        // create a panel to hold the box and button
 		        JPanel howToPanel = new JPanel(new BorderLayout());
-		        howToPanel.setBackground(new Color(106, 88, 188));
+		        howToPanel.setBackground(standardColour);
 		        howToPanel.setBorder(border);
 		        
 		        // create the box
 		        JLabel boxLabel = new JLabel("<html>Fill in the play grid by looking at the numbers in the top and left hand side boxes. These numbers indicate how many correct tiles there are in that column/row. Try to figure out which ones are correct then hit 'Submit'.<br/><br/>The clock is ticking, and an incorrect guess will cost you three seconds, while a correct guess will give you three extra seconds.<br/><br/>Good Luck!");
 		        boxLabel.setFont(new Font("Arial", Font.BOLD, 20));
-		        boxLabel.setForeground(new Color(25,25, 87));
+		        boxLabel.setForeground(borderColour);
 		        boxLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		        boxLabel.setVerticalAlignment(SwingConstants.TOP);
 		        howToPanel.add(boxLabel, BorderLayout.CENTER);
@@ -156,7 +188,8 @@ public class View extends JFrame implements ActionListener{
 		file.add(loadGrid);
 		file.add(saveGrid);
 		file.add(exit);
-		edit.add(changeCS);
+		edit.add(changeBC);
+		edit.add(changeLC);
 		help.add(howTo);
 		menuBar.add(file);
 		menuBar.add(edit);
@@ -202,6 +235,19 @@ public class View extends JFrame implements ActionListener{
 			
 		});
 		
+		//random option
+		JButton rand = new JButton("Random");
+		rand.setPreferredSize(new Dimension(95,45));
+		rand.setFont(new Font("Bad Signal", Font.BOLD, 15));
+		rand.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				frame.dispose();
+				buttons.randPlay();
+			}
+					
+		});
+		
 		
 		//radio button creation for localisation
 		JRadioButton eng = new JRadioButton("English");
@@ -222,6 +268,7 @@ public class View extends JFrame implements ActionListener{
 		
 		launcherPanel.add(design);
 		launcherPanel.add(play);
+		launcherPanel.add(rand);
 		
 		frame.add(launcherPanel, BorderLayout.SOUTH);
 		
@@ -270,13 +317,13 @@ public class View extends JFrame implements ActionListener{
 		
 		
 		//panel colouring
-		leftPanel.setBackground(new Color(106, 88, 188));
-		centerPanel.setBackground(new Color(106, 88, 188));
-		topPanel.setBackground(new Color(106, 88, 188));
-		topNums.setBackground(new Color(106, 88, 188));
-		rightPanel.setBackground(new Color(106, 88, 188));
-		clockPanel.setBackground(new Color(106, 88, 188));
-		logoPanel.setBackground(new Color(106, 88, 188));
+		leftPanel.setBackground(standardColour);
+		centerPanel.setBackground(standardColour);
+		topPanel.setBackground(standardColour);
+		topNums.setBackground(standardColour);
+		rightPanel.setBackground(standardColour);
+		clockPanel.setBackground(standardColour);
+		logoPanel.setBackground(standardColour);
 		
 		
 		//panel sizing
@@ -304,7 +351,7 @@ public class View extends JFrame implements ActionListener{
 		
 		
 		//logo panel
-		Border border = BorderFactory.createLineBorder(new Color(25,25, 87), 3, true);
+		Border border = BorderFactory.createLineBorder(borderColour, 3, true);
 		URL logoURL = Game.class.getResource("/images/piccross2.png");
 		ImageIcon logo = new ImageIcon(logoURL);
 		Image logoResize = logo.getImage();
@@ -453,17 +500,17 @@ public class View extends JFrame implements ActionListener{
 		
 		
 		//panel colouring
-		leftPanel.setBackground(new Color(106, 88, 188));
+		leftPanel.setBackground(standardColour);
 		centerPanel.setBackground(new Color(85, 54, 217));
 		
-		topPanel.setBackground(new Color(106, 88, 188));
-		topNums.setBackground(new Color(106, 88, 188));
+		topPanel.setBackground(standardColour);
+		topNums.setBackground(standardColour);
 		
-		rightPanel.setBackground(new Color(106, 88, 188));
+		rightPanel.setBackground(standardColour);
 		scorePanel.setBackground(Color.black);
 		
-		clockPanel.setBackground(new Color(106, 88, 188));
-		logoPanel.setBackground(new Color(106, 88, 188));
+		clockPanel.setBackground(standardColour);
+		logoPanel.setBackground(standardColour);
 		
 		
 		//panel sizing
@@ -493,7 +540,7 @@ public class View extends JFrame implements ActionListener{
 		
 		
 		//logo panel
-		Border border = BorderFactory.createLineBorder(new Color(25,25, 87), 3, true);
+		Border border = BorderFactory.createLineBorder(borderColour, 3, true);
 		URL logoURL = Game.class.getResource("/images/piccross2.png");
 		ImageIcon logo = new ImageIcon(logoURL);
 		Image logoResize = logo.getImage();
@@ -503,7 +550,6 @@ public class View extends JFrame implements ActionListener{
 		logoLabel.setIcon(logo2);
 		logoLabel.setBorder(border);
 		logoPanel.add(logoLabel);	
-		
 		
 		
 		//clock panel creation
@@ -536,13 +582,8 @@ public class View extends JFrame implements ActionListener{
 		
 		scorePanel.setBorder(BorderFactory.createLineBorder(Color.white,3));
 		scorePanel.setBackground(Color.black);
-
-		
-		
-		
 		
 		buttons.playSubmit(rightPanel, frame, model);
-		
 		
 		buttons.myModel.scoreText(scorePanel);
 		
@@ -551,7 +592,7 @@ public class View extends JFrame implements ActionListener{
 		
 		
 		//button object after rightlabel creation
-		buttons.countdown(clockLabel);
+		buttons.countdown(clockLabel, frame);
 		
 		
 		

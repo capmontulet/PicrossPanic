@@ -2,6 +2,8 @@ package picross;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.util.Random;
+
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
@@ -10,10 +12,9 @@ public class Model {
 	
 	private int[][] grid = new int[5][5];
 	private int[][] playGrid = new int[5][5];
-
-	JLabel topLabels[] = new JLabel[5];
-	JLabel leftLabels[] = new JLabel[5];
 	JLabel scoreLabel = new JLabel();
+	Random rand = new Random();
+
 	
 	
 	private int second=15;
@@ -24,7 +25,7 @@ public class Model {
 	
 	
 	
-	int[][] mapGrid(boolean isDesigned, int[][] designGrid, int[][] defaultGrid) {
+	int[][] mapGrid(boolean isDesigned, boolean isRand, int[][] designGrid, int[][] defaultGrid) {
 		if(!isDesigned) {
 			defaultGrid[0][2]=1;
 			defaultGrid[1][2]=1;
@@ -38,7 +39,14 @@ public class Model {
 			defaultGrid[4][1]=1;
 			defaultGrid[4][3]=1;
 			return defaultGrid;
-		}else {
+		}else if(isRand) {
+			for(int row = 0; row<defaultGrid.length; row++) {
+				for(int col = 0; col < defaultGrid[row].length;col++) {
+					defaultGrid[row][col]= rand.nextInt(2);
+				}
+			}
+		return defaultGrid;	
+		}else{
 		return designGrid;
 		}
 		
@@ -47,23 +55,23 @@ public class Model {
 	public void clueCreate(JPanel panel,Border border, boolean top, Controller buttons, Model model) {
 		if(top==true) {
 		for(int i = 0;i<5;i++) {
-			topLabels[i]=new JLabel();
-			topLabels[i].setForeground(Color.BLACK);
-			topLabels[i].setFont(new Font("Arial", Font.PLAIN, 40));
-			topLabels[i].setHorizontalAlignment(JLabel.CENTER);
-			topLabels[i].setBorder(border);
-			topLabels[i].setText(buttons.clueNum(true, i, model.getPlayGrid()));
-			panel.add(topLabels[i]);
+			buttons.myView.topLabels[i]=new JLabel();
+			buttons.myView.topLabels[i].setForeground(Color.BLACK);
+			buttons.myView.topLabels[i].setFont(new Font("Arial", Font.PLAIN, 40));
+			buttons.myView.topLabels[i].setHorizontalAlignment(JLabel.CENTER);
+			buttons.myView.topLabels[i].setBorder(border);
+			buttons.myView.topLabels[i].setText(buttons.clueNum(true, i, model.getPlayGrid()));
+			panel.add(buttons.myView.topLabels[i]);
 			}
 		}else{
 		for(int i = 0;i<5;i++) {
-			leftLabels[i]=new JLabel();
-			leftLabels[i].setForeground(Color.BLACK);
-			leftLabels[i].setFont(new Font("Arial", Font.PLAIN, 40));
-			leftLabels[i].setHorizontalAlignment(JLabel.CENTER);
-			leftLabels[i].setBorder(border);
-			leftLabels[i].setText(buttons.clueNum(false, i, model.getPlayGrid()));
-			panel.add(leftLabels[i]);
+			buttons.myView.leftLabels[i]=new JLabel();
+			buttons.myView.leftLabels[i].setForeground(Color.BLACK);
+			buttons.myView.leftLabels[i].setFont(new Font("Arial", Font.PLAIN, 40));
+			buttons.myView.leftLabels[i].setHorizontalAlignment(JLabel.CENTER);
+			buttons.myView.leftLabels[i].setBorder(border);
+			buttons.myView.leftLabels[i].setText(buttons.clueNum(false, i, model.getPlayGrid()));
+			panel.add(buttons.myView.leftLabels[i]);
 			}
 		}
 	}

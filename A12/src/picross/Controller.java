@@ -10,14 +10,14 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.concurrent.TimeUnit;
-
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.Timer;
+//import javax.swing.Timer;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * @author Thomas Stanley
@@ -39,8 +39,8 @@ public class Controller extends JFrame implements ActionListener{
 	
 	JButton designSubmit = new JButton();
 	JButton playSubmit = new JButton();
-
 	
+//	Timer timer = new Timer();
 	
 	/**
 	 * Empty Class Constructor
@@ -51,12 +51,16 @@ public class Controller extends JFrame implements ActionListener{
 	}
 	
 	public void start(){
-		myView.splash();
+		myView.launcher();
 	}
 	
 	
 	public void launcherPlay() {
-		playMode(myModel.getGrid(), false, myModel);
+		playMode(myModel.getGrid(), false, false, myModel);
+	}
+	
+	public void randPlay() {
+		playMode(myModel.getGrid(), true, true, myModel);
 	}
 	
 	
@@ -76,7 +80,7 @@ public class Controller extends JFrame implements ActionListener{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				frame.dispose();
-				playMode(myModel.getGrid(), true, myModel);
+				playMode(myModel.getGrid(), true,false, myModel);
 			}
 			
 		});
@@ -103,26 +107,34 @@ public class Controller extends JFrame implements ActionListener{
 	
 	public void playSubmit(JPanel panel, JFrame frame, Model model) {
 
-		playSubmit.setText("Submit");
-		panel.add(playSubmit, BorderLayout.SOUTH);
-		
-		playSubmit.addActionListener(new ActionListener() {
+	    playSubmit.setText("Submit");
+	    panel.add(playSubmit, BorderLayout.SOUTH);
+	    
+	    playSubmit.addActionListener(new ActionListener() {
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if(gridCompare(myModel.getGrid(), model.getGrid())) {
-					
-					model.finalScore=myModel.getSecond()*model.score;
-            		myModel.scoreLabel.setText(myModel.scoreLabel.getText()+"<br/>You Win!<br/>Final Score:<br/>"+model.finalScore+"<br/>Returning...");
-            		
-				}else {
-            		myModel.scoreLabel.setText(myModel.scoreLabel.getText()+"Try Again!!<br/>");
+	        @Override
+	        public void actionPerformed(ActionEvent e) {
+	            if(gridCompare(myModel.getGrid(), model.getGrid())) {
+	                model.finalScore=myModel.getSecond()*model.score;
+	                myModel.scoreLabel.setText(myModel.scoreLabel.getText()+"<br/>You Win!<br/>Final Score:<br/>"+model.finalScore+"<br/>Returning...");
+	                Timer timer = new Timer();
+	                timer.schedule(new TimerTask() {
+	                    boolean executed = false;
 
-				}
-				
-			}
-			
-		});
+	                    @Override
+	                    public void run() {
+	                        if (!executed) {
+	                            executed = true;
+	                            frame.dispose();
+	                            myView.launcher();
+	                        }
+	                    }
+	                }, 3000);
+	            } else {
+	                myModel.scoreLabel.setText(myModel.scoreLabel.getText()+"Try Again!!<br/>");
+	            }
+	        }
+	    });
 	}
 		
 	//countdown panel
@@ -132,28 +144,40 @@ public class Controller extends JFrame implements ActionListener{
 	 * Uses an action listener to change time, and can also have events
 	 * happen at certain times of play.
 	 */
-	public void countdown(JLabel label) {
-		Timer timer = new Timer(1000, new ActionListener() {
-			
+	public void countdown(JLabel label, JFrame frame) {
+	    Timer timer = new Timer();
+	    timer.scheduleAtFixedRate(new TimerTask() {
+	        @Override
+	        public void run() {
+	            if (myModel.getSecond() >= 10) {
+	                label.setText("00:" + myModel.getSecond());
+	            } else if (myModel.getSecond() < 10) {
+	                label.setText("00:0" + myModel.getSecond());
+	            }
+	            if (myModel.getSecond() > 0) {
+	                myModel.setSecond(myModel.getSecond() - 1);
+	            } else {
+	            	label.setText("0:00");
+	                myModel.scoreLabel.setText("<html>Time Out!!<br/>You Lose!!");
+	                playSubmit.setEnabled(false);
+	                Timer timer2 = new Timer();
+	                timer2.schedule(new TimerTask() {
+	                    boolean executed = false;
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				
-				if(myModel.getSecond()>=10) {
-					label.setText("00:"+myModel.getSecond());
-				}else if(myModel.getSecond()<10){
-					label.setText("00:0"+myModel.getSecond());
-				}
-				if(myModel.getSecond()>0) {
-				myModel.setSecond(myModel.getSecond() - 1);
-				}
-				
-			}
-			
-		});
-		timer.start();
+	                    @Override
+	                    public void run() {
+	                        if (!executed) {
+	                            executed = true;
+	                            frame.dispose();
+	                            myView.launcher();
+	                        }
+	                    }
+	                }, 3000);
+	                timer.cancel();
+	            }
+	        }
+	    }, 0, 1000);
 	}
-	
 	
 	/**
 	 * This method is used in Controller class to create button details of center panel of both Design and Play modes
@@ -190,7 +214,6 @@ public class Controller extends JFrame implements ActionListener{
 	                    		myModel.increaseTime();
 	                    		buttonArr[r][c].setEnabled(false);
 	                    		buttonArr[r][c].setBackground(new Color(25,25, 87));
-	                    		//System.out.println(model.score);
 	                    		myModel.scoreLabel.setText(myModel.scoreLabel.getText()+model.score+"<br/>");
 	                    	}else {
 	                    		myModel.decreaseTime();
@@ -209,11 +232,13 @@ public class Controller extends JFrame implements ActionListener{
 	
 	
 	
-	public void playMode(int[][] designGrid, boolean isDesigned, Model model) {
+	public void playMode(int[][] designGrid, boolean isDesigned, boolean isRand, Model model) {
 		
-
-		model.setPlayGrid(model.mapGrid(isDesigned, designGrid, model.getGrid()));
+		
+		model.setPlayGrid(model.mapGrid(isDesigned, isRand, designGrid, model.getGrid()));
 		myView.play(model);
+		
+		
 		
 	}
 	
