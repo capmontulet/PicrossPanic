@@ -15,30 +15,37 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 
-
+/**
+ * View Class contains all UI elements, contains methods for different modes of the game, where the UI differs in each.
+ * @author Thomas Stanley
+ *
+ */
 public class View extends JFrame implements ActionListener{
 
-	JLabel topLabels[] = new JLabel[5];
-	JLabel leftLabels[] = new JLabel[5];
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private JLabel topLabels[] = new JLabel[5];
+	private JLabel leftLabels[] = new JLabel[5];
 	private JFrame frame = new JFrame();
 	
 	Color borderColour = new Color(25,25, 87);
 	Color standardColour = new Color(106, 88, 188);
+	Border border = BorderFactory.createLineBorder(borderColour, 3, true);
 	
-	
-	
-//	test = new Color(25,45, 87);
-	
+	/**
+	 * Empty Constructor
+	 */
 	public View() {
 	
-		
 	}
 	
+	/**
+	 * Method Displays splash screen for five seconds before calling the launcher.
+	 */
 	public void splash() {
-		Controller buttons = new Controller();
-		
 		JWindow splashWindow = new JWindow();
-
 		URL splashURL = Game.class.getResource("/images/splash.gif");
 		ImageIcon splashIcon = new ImageIcon(splashURL);
 		splashWindow.setContentPane(new JLabel(splashIcon));
@@ -57,14 +64,12 @@ public class View extends JFrame implements ActionListener{
 		launcher();
 	}
 	
-	
+	/**
+	 * Displays the launcher. The launcher contains some buttons for different play options and a menubar with some other functionality.
+	 */
 	public void launcher() {
 		Controller buttons = new Controller();
-		
-			
-		
-		Border border = BorderFactory.createLineBorder(borderColour, 3, true);
-		
+				
 		URL bgURL = Game.class.getResource("/images/launcherBack2.png");
 		ImageIcon bg = new ImageIcon(bgURL);
         frame.setContentPane(new JLabel(bg));
@@ -76,7 +81,6 @@ public class View extends JFrame implements ActionListener{
 		frame.setLocationRelativeTo(null);
 		frame.setLayout(new BorderLayout());
 		frame.setResizable(false);
-		
 		
 		//Menu Bar
 		JMenuBar menuBar = new JMenuBar();
@@ -94,23 +98,27 @@ public class View extends JFrame implements ActionListener{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JColorChooser cc = new JColorChooser();
-				borderColour = cc.showDialog(null, "Border Colour Change", standardColour);
+				borderColour = JColorChooser.showDialog(null, "Border Colour Change", standardColour);
 				
 			}
 			
 		});
 		
+		URL changeURL = Game.class.getResource("/images/piciconcol.gif");
+		ImageIcon changeIcon = new ImageIcon(changeURL);
+		changeBC.setIcon(changeIcon);
+	
 		changeLC.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JColorChooser cc = new JColorChooser();
-				standardColour = cc.showDialog(null, "Border Colour Change", standardColour);
+				standardColour = JColorChooser.showDialog(null, "Border Colour Change", standardColour);
 				
 			}
 			
 		});
+		
+		changeLC.setIcon(changeIcon);
 		
 		loadGrid.addActionListener(new ActionListener() {
 
@@ -120,12 +128,15 @@ public class View extends JFrame implements ActionListener{
 				int response = loader.showOpenDialog(null);
 				if(response==JFileChooser.APPROVE_OPTION) {
 					File filePicker = new File(loader.getSelectedFile().getAbsolutePath());
-					buttons.playMode(buttons.fileLoader(filePicker,buttons.myModel), true, false, buttons.myModel);
+					buttons.playMode(buttons.fileLoader(filePicker), true, false, buttons.myModel);
 				}
 				
 			}
 			
 		});
+		URL loadURL = Game.class.getResource("/images/piciconabt.gif");
+		ImageIcon loadIcon = new ImageIcon(loadURL);
+		loadGrid.setIcon(loadIcon);
 		
 		saveGrid.addActionListener(new ActionListener() {
 
@@ -136,6 +147,10 @@ public class View extends JFrame implements ActionListener{
 			}
 			
 		});
+		URL saveURL = Game.class.getResource("/images/piciconnew.gif");
+		ImageIcon saveIcon = new ImageIcon(saveURL);
+		saveGrid.setIcon(saveIcon);
+		
 		
 		exit.addActionListener(new ActionListener() {
 
@@ -146,16 +161,18 @@ public class View extends JFrame implements ActionListener{
 			
 		});
 		
+		URL exitURL = Game.class.getResource("/images/piciconext.gif");
+		ImageIcon exitIcon = new ImageIcon(exitURL);
+		exit.setIcon(exitIcon);
+		
 		howTo.addActionListener(new ActionListener() {
 
 		    @Override
 		    public void actionPerformed(ActionEvent e) {
-		        // create a panel to hold the box and button
 		        JPanel howToPanel = new JPanel(new BorderLayout());
 		        howToPanel.setBackground(standardColour);
 		        howToPanel.setBorder(border);
 		        
-		        // create the box
 		        JLabel boxLabel = new JLabel("<html>Fill in the play grid by looking at the numbers in the top and left hand side boxes. These numbers indicate how many correct tiles there are in that column/row. Try to figure out which ones are correct then hit 'Submit'.<br/><br/>The clock is ticking, and an incorrect guess will cost you three seconds, while a correct guess will give you three extra seconds.<br/><br/>Good Luck!");
 		        boxLabel.setFont(new Font("Arial", Font.BOLD, 20));
 		        boxLabel.setForeground(borderColour);
@@ -163,27 +180,25 @@ public class View extends JFrame implements ActionListener{
 		        boxLabel.setVerticalAlignment(SwingConstants.TOP);
 		        howToPanel.add(boxLabel, BorderLayout.CENTER);
 		        
-		        // create the button
 		        JButton closeButton = new JButton("Close");
 		        closeButton.addActionListener(new ActionListener() {
 		            @Override
 		            public void actionPerformed(ActionEvent e) {
-		                // remove the panel from the frame
 		                frame.getContentPane().remove(howToPanel);
 		                frame.revalidate();
 		                frame.repaint();
 		            }
 		        });
 		        howToPanel.add(closeButton, BorderLayout.SOUTH);
-		        
-		        // add the panel to the center of the frame
 		        frame.add(howToPanel, BorderLayout.CENTER);
-		        
-		        // revalidate and repaint the frame to update the changes
 		        frame.revalidate();
 		        frame.repaint();
 		    }
 		});
+		
+		URL howURL = Game.class.getResource("/images/piciconhlp.gif");
+		ImageIcon howIcon = new ImageIcon(howURL);
+		howTo.setIcon(howIcon);
 		
 		file.add(loadGrid);
 		file.add(saveGrid);
@@ -253,6 +268,24 @@ public class View extends JFrame implements ActionListener{
 		JRadioButton eng = new JRadioButton("English");
 		JRadioButton ger = new JRadioButton("German");
 		
+		eng.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				System.out.println("Localisation not implemented");
+			}
+			
+		});
+		
+		ger.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				System.out.println("Localisation not implemented");
+			}
+			
+		});
+		
 		URL engURL = Game.class.getResource("/images/realengflag.gif");
 		ImageIcon engFlag= new ImageIcon(engURL);
 		
@@ -277,6 +310,10 @@ public class View extends JFrame implements ActionListener{
 		
 	}
 	
+	/**
+	 * Method displays the design mode. Boolean value to indicate whether method has been called in save mode. If it has, the button text is different, and the instruction text is different.
+	 * @param isDesign Passed to indicate whether method has been called from save mode.
+	 */
 	public void design(boolean isDesign) {
 		
 		Controller buttons = new Controller();
@@ -289,7 +326,6 @@ public class View extends JFrame implements ActionListener{
 		frame.setTitle("Thomas Stanley - Picross Panic Design Mode");
 		ImageIcon icon = new ImageIcon("src/images/logo.png");
 		frame.setIconImage(icon.getImage());
-		
 		
 		
 		//panel creation
@@ -315,7 +351,6 @@ public class View extends JFrame implements ActionListener{
 		
 		
 		
-		
 		//panel colouring
 		leftPanel.setBackground(standardColour);
 		centerPanel.setBackground(standardColour);
@@ -327,23 +362,15 @@ public class View extends JFrame implements ActionListener{
 		
 		
 		//panel sizing
-		
-		
 		topPanel.setPreferredSize(new Dimension(100,110));
-		
 		topNums.setPreferredSize(new Dimension(50,110));
 		topPanel.add(topNums);
-		
 		logoPanel.setPreferredSize(new Dimension(175,110));
 		topPanel.add(logoPanel);
-		
 		clockPanel.setPreferredSize(new Dimension(175,100));
 		topPanel.add(clockPanel);
-		
 		rightPanel.setPreferredSize(new Dimension(175,100));
-		
 		leftPanel.setPreferredSize(new Dimension(175,100));
-		
 		centerPanel.setPreferredSize(new Dimension(100,100));
 		
 		
@@ -351,7 +378,6 @@ public class View extends JFrame implements ActionListener{
 		
 		
 		//logo panel
-		Border border = BorderFactory.createLineBorder(borderColour, 3, true);
 		URL logoURL = Game.class.getResource("/images/piccross2.png");
 		ImageIcon logo = new ImageIcon(logoURL);
 		Image logoResize = logo.getImage();
@@ -361,7 +387,6 @@ public class View extends JFrame implements ActionListener{
 		logoLabel.setIcon(logo2);
 		logoLabel.setBorder(border);
 		logoPanel.add(logoLabel);	
-		
 		
 		
 		//clock panel creation
@@ -377,51 +402,9 @@ public class View extends JFrame implements ActionListener{
 		centerPanel.setBorder(border);
 		
 		//left panel label creation
-		JLabel leftLabel1 = new JLabel();
-		leftLabel1.setBorder(border);
-		leftPanel.add(leftLabel1);
-		
-		JLabel leftLabel2 = new JLabel();
-		leftLabel2.setBorder(border);
-		leftPanel.add(leftLabel2);
-		
-		
-		JLabel leftLabel3 = new JLabel();
-		leftLabel3.setBorder(border);
-		leftPanel.add(leftLabel3);
-		
-		
-		JLabel leftLabel4 = new JLabel();
-		leftLabel4.setBorder(border);
-		leftPanel.add(leftLabel4);
-		
-		JLabel leftLabel5 = new JLabel();
-		leftLabel5.setBorder(border);
-		leftPanel.add(leftLabel5);
-		
-		
-		//top panel label adding
-		JLabel topNumsLabel1 = new JLabel();
-		topNumsLabel1.setBorder(border);
-		topNums.add(topNumsLabel1);
-		
-		
-		JLabel topNumsLabel2 = new JLabel();
-		topNumsLabel2.setBorder(border);
-		topNums.add(topNumsLabel2);
-		
-		JLabel topNumsLabel3 = new JLabel();
-		topNumsLabel3.setBorder(border);
-		topNums.add(topNumsLabel3);
-		
-		JLabel topPanelLabel4 = new JLabel();
-		topPanelLabel4.setBorder(border);
-		topNums.add(topPanelLabel4);
-		
-		JLabel topPanelLabel5 = new JLabel();
-		topPanelLabel5.setBorder(border);
-		topNums.add(topPanelLabel5);
-		
+		buttons.myModel.clueCreate(topNums,border,true, buttons, buttons.myModel);
+		//making labels for left panel
+		buttons.myModel.clueCreate(leftPanel, border, false, buttons, buttons.myModel);
 		
 		topPanel.add(clockPanel, BorderLayout.EAST);
 		topPanel.add(logoPanel, BorderLayout.WEST);
@@ -451,7 +434,6 @@ public class View extends JFrame implements ActionListener{
 		rightPanel.add(rightLabel, BorderLayout.NORTH);
 		
 		
-		
 		//panel adding
 		frame.add(topPanel, BorderLayout.NORTH);
 		frame.add(rightPanel, BorderLayout.EAST);
@@ -461,6 +443,10 @@ public class View extends JFrame implements ActionListener{
 		frame.setVisible(true);
 	}
 	
+	/**
+	 * Method is called to start play mode. Model is passed from Controller if called from there.
+	 * @param model Model object passed from Controller.
+	 */
 	public void play(Model model) {
 		Controller buttons = new Controller();
 		
@@ -535,12 +521,8 @@ public class View extends JFrame implements ActionListener{
 		
 		centerPanel.setPreferredSize(new Dimension(100,100));
 		
-		
-		
-		
-		
+
 		//logo panel
-		Border border = BorderFactory.createLineBorder(borderColour, 3, true);
 		URL logoURL = Game.class.getResource("/images/piccross2.png");
 		ImageIcon logo = new ImageIcon(logoURL);
 		Image logoResize = logo.getImage();
@@ -564,7 +546,7 @@ public class View extends JFrame implements ActionListener{
 		buttons.buttonDetails(centerPanel, true, model);
 		centerPanel.setBorder(border);
 		
-		
+		//making labels for top panel
 		buttons.myModel.clueCreate(topNums,border,true, buttons, model);
 		//making labels for left panel
 		buttons.myModel.clueCreate(leftPanel, border, false, buttons, model);
@@ -609,6 +591,38 @@ public class View extends JFrame implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	/**
+	 * getter for topLabel array
+	 * @return topLabels array
+	 */
+	public JLabel[] getTopLabels() {
+		return topLabels;
+	}
+
+	/**
+	 * setter for topLabels array
+	 * @param topLabels topLabels variable
+	 */
+	public void setTopLabels(JLabel topLabels[]) {
+		this.topLabels = topLabels;
+	}
+
+	/**
+	 * getter for leftLabels array
+	 * @return leftLabels
+	 */
+	public JLabel[] getLeftLabels() {
+		return leftLabels;
+	}
+
+	/**
+	 * setter for leftLabels array
+	 * @param leftLabels leftLabels variable
+	 */
+	public void setLeftLabels(JLabel leftLabels[]) {
+		this.leftLabels = leftLabels;
 	}
 
 }

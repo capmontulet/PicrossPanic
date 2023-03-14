@@ -15,7 +15,6 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-//import javax.swing.Timer;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -36,7 +35,6 @@ public class Controller extends JFrame implements ActionListener{
 	
 	JButton buttonArr[][] = new JButton[5][5];
 	
-	
 	JButton designSubmit = new JButton();
 	JButton playSubmit = new JButton();
 	
@@ -50,15 +48,23 @@ public class Controller extends JFrame implements ActionListener{
 		
 	}
 	
+	/**
+	 * Calls the splash() method in View Class. Creates 'Main Menu' frame with a few different options.
+	 */
 	public void start(){
-		myView.launcher();
+		myView.splash();
 	}
 	
-	
+	/**
+	 * Method is called by view method when the 'play' button is clicked on the launcher menu. Creates game with default grid.
+	 */
 	public void launcherPlay() {
 		playMode(myModel.getGrid(), false, false, myModel);
 	}
 	
+	/**
+	 * Method is called by view method if 'Random' is clicked in launcher menu. Creates randomised game.
+	 */
 	public void randPlay() {
 		playMode(myModel.getGrid(), true, true, myModel);
 	}
@@ -86,6 +92,11 @@ public class Controller extends JFrame implements ActionListener{
 		});
 	}
 	
+	/**
+	 * Button is used in the design panel for 'Save' mode to save the grid to a file for later use.
+	 * @param panel	The panel passed by View Class is the scoreBoard Panel.
+	 * @param frame	The frame passed by View class to dispose of once the button is clicked.
+	 */
 	public void saveSubmit(JPanel panel, JFrame frame) {
 		
 		designSubmit.setText("Save");
@@ -97,26 +108,31 @@ public class Controller extends JFrame implements ActionListener{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				frame.dispose();
-				saveToFile(myModel.getGrid(), "Saved Grid"+Integer.toString(myModel.savedGridFileNum)+".csv");
-				myModel.savedGridFileNum++;
+				saveToFile(myModel.getGrid(), "Saved Grid"+Integer.toString(myModel.getSavedGridFileNum())+".csv");
+				myModel.setSavedGridFileNum(myModel.getSavedGridFileNum() + 1);
 				myView.launcher();
 			}
 			
 		});
 	}
 	
+	/**
+	 * Button in play mode to submit your finished grid during play. Upon correct grid, message and final score is displayed, on incorrect guess message is displayed.
+	 * @param panel Panel for button to be added on to, panel passed from View class is scorePanel.
+	 * @param frame Frame passed from View class to be disposed if correct guess made.
+	 * @param model Model object passed to compare grids from two different model objects. If those two grids match, condition is met.
+	 */
 	public void playSubmit(JPanel panel, JFrame frame, Model model) {
 
 	    playSubmit.setText("Submit");
 	    panel.add(playSubmit, BorderLayout.SOUTH);
-	    
 	    playSubmit.addActionListener(new ActionListener() {
 
 	        @Override
 	        public void actionPerformed(ActionEvent e) {
 	            if(gridCompare(myModel.getGrid(), model.getGrid())) {
-	                model.finalScore=myModel.getSecond()*model.score;
-	                myModel.scoreLabel.setText(myModel.scoreLabel.getText()+"<br/>You Win!<br/>Final Score:<br/>"+model.finalScore+"<br/>Returning...");
+	                model.setFinalScore(myModel.getSecond()*model.getScore());
+	                myModel.getScoreLabel().setText(myModel.getScoreLabel().getText()+"<br/>You Win!<br/>Final Score:<br/>"+model.getFinalScore()+"<br/>Returning...");
 	                Timer timer = new Timer();
 	                timer.schedule(new TimerTask() {
 	                    boolean executed = false;
@@ -131,18 +147,17 @@ public class Controller extends JFrame implements ActionListener{
 	                    }
 	                }, 3000);
 	            } else {
-	                myModel.scoreLabel.setText(myModel.scoreLabel.getText()+"Try Again!!<br/>");
+	                myModel.getScoreLabel().setText(myModel.getScoreLabel().getText()+"Try Again!!<br/>");
 	            }
 	        }
 	    });
 	}
 		
-	//countdown panel
 	/**
-	 * @param label Label passed from both Design and Play modes.
-	 * The method that runs the countdown clock in the clock panel.
-	 * Uses an action listener to change time, and can also have events
-	 * happen at certain times of play.
+	 * Creates and maintains the timer displayed in the top right of the play window. 'Second' variable in Model class is displayed in the label and
+	 * is decremented by 1 every second. If 'Second' reaches 0, a message is displayed, and the window closes after a three second delay.
+	 * @param label Label passed from View class for the 'Second' variable to be displayed on.
+	 * @param frame Frame passed form View class to be disposed if the time runs out.
 	 */
 	public void countdown(JLabel label, JFrame frame) {
 	    Timer timer = new Timer();
@@ -158,7 +173,7 @@ public class Controller extends JFrame implements ActionListener{
 	                myModel.setSecond(myModel.getSecond() - 1);
 	            } else {
 	            	label.setText("0:00");
-	                myModel.scoreLabel.setText("<html>Time Out!!<br/>You Lose!!");
+	                myModel.getScoreLabel().setText("<html>Time Out!!<br/>You Lose!!");
 	                playSubmit.setEnabled(false);
 	                Timer timer2 = new Timer();
 	                timer2.schedule(new TimerTask() {
@@ -180,11 +195,11 @@ public class Controller extends JFrame implements ActionListener{
 	}
 	
 	/**
-	 * This method is used in Controller class to create button details of center panel of both Design and Play modes
-	 * @param panel Center panel passed
-	 * @param button Button passed from controller class
-	 * @param x Row of 2d Array
-	 * @param y Column of 2d Array
+	 * Method is called for each button in a button array that makes the grid in the center of the play board.
+	 * Gives each button some details and an actionListener
+	 * @param panel Panel passed from View class for the button to be added. Panel passed from View is centerPanel.
+	 * @param isPlay Boolean value to differentiate between design and play modes for the buttons, since button behaviour is different in both modes.
+	 * @param model Model object passed from play(Model model) method in View class.
 	 */
 	public void buttonDetails(JPanel panel, boolean isPlay,Model model) {
 	    for(int row = 0; row < buttonArr.length; row++) {
@@ -209,12 +224,13 @@ public class Controller extends JFrame implements ActionListener{
 	                		if(model.getPlayGrid()[r][c]==0) {
 	                			myModel.getGrid()[r][c]=0;
 	                		}
+	                		//if the two grids are equal, AND are both 1, to stop empty tiles matching as well, correct guess is detected.
 	                		if(model.getPlayGrid()[r][c]==myModel.getGrid()[r][c] && model.getPlayGrid()[r][c]==1) {
-	                    		model.score+=100;
+	                    		model.setScore(model.getScore() + 100);
 	                    		myModel.increaseTime();
 	                    		buttonArr[r][c].setEnabled(false);
 	                    		buttonArr[r][c].setBackground(new Color(25,25, 87));
-	                    		myModel.scoreLabel.setText(myModel.scoreLabel.getText()+model.score+"<br/>");
+	                    		myModel.getScoreLabel().setText(myModel.getScoreLabel().getText()+model.getScore()+"<br/>");
 	                    	}else {
 	                    		myModel.decreaseTime();
 	                    	}
@@ -231,18 +247,28 @@ public class Controller extends JFrame implements ActionListener{
 	}
 	
 	
-	
+	/**
+	 * Method called to start a game, either pre-designed, not designed, or random. This is done through boolean values passed.
+	 * @param designGrid Grid designed by user. Is passed to setPlayGrid.
+	 * @param isDesigned Value passed in method call to indicate if the grid has been designed or not.
+	 * @param isRand Value passed in method call to indicate of the grid should be randomised.
+	 * @param model Model object passed.
+	 */
 	public void playMode(int[][] designGrid, boolean isDesigned, boolean isRand, Model model) {
-		
 		
 		model.setPlayGrid(model.mapGrid(isDesigned, isRand, designGrid, model.getGrid()));
 		myView.play(model);
 		
-		
-		
 	}
 	
 	
+	/**
+	 * Method called by Model class in a for loop to display clues on the top and left panels in play mode.
+	 * @param top Boolean value for if the top panel is being used. If false, the left panel is being used.
+	 * @param z Index of Label array passed
+	 * @param grid grid passed from Model object to iterate through for values
+	 * @return returns a string to be passed to the label.setText() for the label in that iteration of the for loop in Model Class.
+	 */
 	public String clueNum(boolean top, int z, int[][] grid) {
 	    int sum = 0;
 	    if (top) {
@@ -257,7 +283,14 @@ public class Controller extends JFrame implements ActionListener{
 	    return String.valueOf(sum);
 	}
 	
-	int[][] fileLoader(File file,Model myModel){
+	
+	/**
+	 * Called from View class to be used as the int[][] parameter in playMode().
+	 * Reads a file selected by the file picker and creates an int[][].
+	 * @param file File picked by file picker in View
+	 * @return int[][] from file returned
+	 */
+	int[][] fileLoader(File file){
 	    try (BufferedReader br = new BufferedReader(new FileReader(file))) {
 	        String line;
 	        int row = 0;
@@ -275,6 +308,11 @@ public class Controller extends JFrame implements ActionListener{
 	    return myModel.getGrid();
 	}
 	
+	/**
+	 * Method called from design() in View class. Reads the grid given by user and saves to csv file for later loading. 
+	 * @param grid Grid to be saved passed
+	 * @param name name of file to be saved.
+	 */
 	public void saveToFile(int[][] grid, String name) {
 	    try {
 	        Path filePath = Paths.get("src", "Saved Grids", name);
@@ -291,6 +329,12 @@ public class Controller extends JFrame implements ActionListener{
 	    }
 	}
 	
+	/**
+	 * Method called by submitPlay() to check if the user given solution is correct. Compares two int[][], the correct one and the user created one.
+	 * @param grid1 First int[][] to be compared
+	 * @param grid2 Second int[][] to be compared
+	 * @return returns boolean value for if the arrays are the same.
+	 */
 	public boolean gridCompare(int[][] grid1, int[][] grid2) {
 	    for (int i = 0; i < 5; i++) {
 	        for (int j = 0; j < 5; j++) {
