@@ -1,1 +1,1 @@
-typeSearchIndex = [{"l":"All Classes","url":"allclasses-index.html"},{"p":"picross","l":"Controller"},{"p":"picross","l":"Game"},{"p":"picross","l":"Model"},{"p":"picross","l":"View"}]
+typeSearchIndex = [{"l":"All Classes","url":"allclasses-index.html"},{"p":"picross","l":"Client"},{"p":"picross","l":"Server.ClientHandler"},{"p":"picross","l":"Controller"},{"p":"picross","l":"Game"},{"p":"picross","l":"Model"},{"p":"picross","l":"Server"},{"p":"picross","l":"View"}]

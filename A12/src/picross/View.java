@@ -29,6 +29,7 @@ public class View extends JFrame implements ActionListener{
 	private JLabel topLabels[] = new JLabel[5];
 	private JLabel leftLabels[] = new JLabel[5];
 	private JFrame frame = new JFrame();
+
 	
 	Color borderColour = new Color(25,25, 87);
 	Color standardColour = new Color(106, 88, 188);
@@ -69,7 +70,8 @@ public class View extends JFrame implements ActionListener{
 	 */
 	public void launcher() {
 		Controller buttons = new Controller();
-				
+		Border border = BorderFactory.createLineBorder(borderColour, 3, true);
+		
 		URL bgURL = Game.class.getResource("/images/launcherBack2.png");
 		ImageIcon bg = new ImageIcon(bgURL);
         frame.setContentPane(new JLabel(bg));
@@ -86,7 +88,11 @@ public class View extends JFrame implements ActionListener{
 		JMenuBar menuBar = new JMenuBar();
 		JMenu file = new JMenu("File");
 		JMenu help = new JMenu("Help");
+		JMenu online = new JMenu("C/S A32");
+		online.setBorder(BorderFactory.createLineBorder((Color.red), 5));
 		JMenu edit = new JMenu("Edit");
+		JMenuItem client = new JMenuItem("Client");
+		JMenuItem server = new JMenuItem("Server");
 		JMenuItem changeBC = new JMenuItem("Change Border Colour");
 		JMenuItem changeLC = new JMenuItem("Change Label Colour");
 		JMenuItem loadGrid = new JMenuItem("Load Grid");
@@ -98,8 +104,26 @@ public class View extends JFrame implements ActionListener{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				borderColour = JColorChooser.showDialog(null, "Border Colour Change", standardColour);
+				borderColour = JColorChooser.showDialog(null, "Border Colour Change", borderColour);
 				
+			}
+			
+		});
+		
+		client.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Client client = new Client();
+			}
+			
+		});
+		
+		server.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Server server = new Server();
 			}
 			
 		});
@@ -129,6 +153,7 @@ public class View extends JFrame implements ActionListener{
 				if(response==JFileChooser.APPROVE_OPTION) {
 					File filePicker = new File(loader.getSelectedFile().getAbsolutePath());
 					buttons.playMode(buttons.fileLoader(filePicker), true, false, buttons.myModel);
+					frame.dispose();
 				}
 				
 			}
@@ -205,9 +230,12 @@ public class View extends JFrame implements ActionListener{
 		file.add(exit);
 		edit.add(changeBC);
 		edit.add(changeLC);
+		online.add(client);
+		online.add(server);
 		help.add(howTo);
 		menuBar.add(file);
 		menuBar.add(edit);
+		menuBar.add(online);
 		menuBar.add(help);
 		frame.add(menuBar, BorderLayout.NORTH);
 		
@@ -317,6 +345,7 @@ public class View extends JFrame implements ActionListener{
 	public void design(boolean isDesign) {
 		
 		Controller buttons = new Controller();
+		Border border = BorderFactory.createLineBorder(borderColour, 3, true);
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(850,600);
@@ -402,9 +431,9 @@ public class View extends JFrame implements ActionListener{
 		centerPanel.setBorder(border);
 		
 		//left panel label creation
-		buttons.myModel.clueCreate(topNums,border,true, buttons, buttons.myModel);
+		viewClueCreate(topNums,border,true, buttons, buttons.myModel);
 		//making labels for left panel
-		buttons.myModel.clueCreate(leftPanel, border, false, buttons, buttons.myModel);
+		viewClueCreate(leftPanel, border, false, buttons, buttons.myModel);
 		
 		topPanel.add(clockPanel, BorderLayout.EAST);
 		topPanel.add(logoPanel, BorderLayout.WEST);
@@ -449,7 +478,7 @@ public class View extends JFrame implements ActionListener{
 	 */
 	public void play(Model model) {
 		Controller buttons = new Controller();
-		
+		Border border = BorderFactory.createLineBorder(borderColour, 3, true);
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(850,600);
@@ -547,9 +576,9 @@ public class View extends JFrame implements ActionListener{
 		centerPanel.setBorder(border);
 		
 		//making labels for top panel
-		buttons.myModel.clueCreate(topNums,border,true, buttons, model);
+		viewClueCreate(topNums,border,true, buttons, model);
 		//making labels for left panel
-		buttons.myModel.clueCreate(leftPanel, border, false, buttons, model);
+		viewClueCreate(leftPanel, border, false, buttons, model);
 		
 		
 		topPanel.add(clockPanel, BorderLayout.EAST);
@@ -591,6 +620,40 @@ public class View extends JFrame implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	
+	/**
+	 * Method displays clues on both top and side panels on game board. Uses for loop to change label details and passes label[] index to clueNum method to set its text.
+	 * @param panel Panel passed from View to add the labels created to. Both topPanel and leftPanel will be passed from View.
+	 * @param border border passed from View for use on labels.
+	 * @param top Boolean value to indicate if method is being called for the top labels, or the left hand side labels.
+	 * @param buttons Controller object passed from View to call its clueNum method on each label[] element.
+	 * @param model Model object passed from View. Normally this would not be needed as the method is in the Model class, however the specific Model object from View needs
+	 * 		  to be manipulated.
+	 */
+	public void viewClueCreate(JPanel panel,Border border, boolean top, Controller buttons, Model model) {
+		if(top==true) {
+		for(int i = 0;i<5;i++) {
+			getLeftLabels()[i]=new JLabel();
+			getLeftLabels()[i].setForeground(Color.BLACK);
+			getLeftLabels()[i].setFont(new Font("Arial", Font.PLAIN, 40));
+			getLeftLabels()[i].setHorizontalAlignment(JLabel.CENTER);
+			getLeftLabels()[i].setBorder(border);
+			getLeftLabels()[i].setText(buttons.clueNum(true, i, model.getPlayGrid()));
+			panel.add(getLeftLabels()[i]);
+			}
+		}else{
+		for(int i = 0;i<5;i++) {
+			getLeftLabels()[i]=new JLabel();
+			getLeftLabels()[i].setForeground(Color.BLACK);
+			getLeftLabels()[i].setFont(new Font("Arial", Font.PLAIN, 40));
+			getLeftLabels()[i].setHorizontalAlignment(JLabel.CENTER);
+			getLeftLabels()[i].setBorder(border);
+			getLeftLabels()[i].setText(buttons.clueNum(false, i, model.getPlayGrid()));
+			panel.add(getLeftLabels()[i]);
+			}
+		}
 	}
 
 	/**

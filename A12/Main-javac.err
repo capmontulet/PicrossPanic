@@ -1,0 +1,7 @@
+src\picross\Client.java:24: warning: [serial] serializable class Client has no definition of serialVersionUID
+public class Client extends JFrame{
+       ^
+src\picross\Server.java:26: warning: [serial] serializable class Server has no definition of serialVersionUID
+public class Server extends JFrame{
+       ^
+2 warnings

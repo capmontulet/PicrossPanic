@@ -8,10 +8,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -37,8 +36,6 @@ public class Controller extends JFrame implements ActionListener{
 	
 	JButton designSubmit = new JButton();
 	JButton playSubmit = new JButton();
-	
-//	Timer timer = new Timer();
 	
 	/**
 	 * Empty Class Constructor
@@ -104,11 +101,10 @@ public class Controller extends JFrame implements ActionListener{
 		
 		designSubmit.addActionListener(new ActionListener(){
 			
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				frame.dispose();
-				saveToFile(myModel.getGrid(), "Saved Grid"+Integer.toString(myModel.getSavedGridFileNum())+".csv");
+				saveToFile(myModel.getGrid());
 				myModel.setSavedGridFileNum(myModel.getSavedGridFileNum() + 1);
 				myView.launcher();
 			}
@@ -311,21 +307,24 @@ public class Controller extends JFrame implements ActionListener{
 	/**
 	 * Method called from design() in View class. Reads the grid given by user and saves to csv file for later loading. 
 	 * @param grid Grid to be saved passed
-	 * @param name name of file to be saved.
 	 */
-	public void saveToFile(int[][] grid, String name) {
-	    try {
-	        Path filePath = Paths.get("src", "Saved Grids", name);
-	        FileWriter writer = new FileWriter(filePath.toString());
-	        for (int i = 0; i < grid.length; i++) {
-	            for (int j = 0; j < grid[i].length; j++) {
-	                writer.write(grid[i][j] + ",");
+	public void saveToFile(int[][] grid) {
+	    JFileChooser saver = new JFileChooser();
+	    int response = saver.showSaveDialog(null);
+	    if (response == JFileChooser.APPROVE_OPTION) {
+	        try {
+	            File file = saver.getSelectedFile();
+	            FileWriter writer = new FileWriter(file);
+	            for (int i = 0; i < grid.length; i++) {
+	                for (int j = 0; j < grid[i].length; j++) {
+	                    writer.write(grid[i][j] + ",");
+	                }
+	                writer.write("\n");
 	            }
-	            writer.write("\n");
+	            writer.close();
+	        } catch (Exception ex) {
+	            ex.printStackTrace();
 	        }
-	        writer.close();
-	    } catch (Exception e) {
-	        System.out.println("Save to file error.");
 	    }
 	}
 	

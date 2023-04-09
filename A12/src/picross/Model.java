@@ -5,7 +5,6 @@ import java.awt.Font;
 import java.util.Random;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.Border;
 
 /**
  * Model Class contains the variables behind the working of the game. Contain methods for manipulating the int[][] and labels associated with gameplay.
@@ -64,38 +63,6 @@ public class Model {
 		
 	}
 	
-	/**
-	 * Method displays clues on both top and side panels on game board. Uses for loop to change label details and passes label[] index to clueNum method to set its text.
-	 * @param panel Panel passed from View to add the labels created to. Both topPanel and leftPanel will be passed from View.
-	 * @param border border passed from View for use on labels.
-	 * @param top Boolean value to indicate if method is being called for the top labels, or the left hand side labels.
-	 * @param buttons Controller object passed from View to call its clueNum method on each label[] element.
-	 * @param model Model object passed from View. Normally this would not be needed as the method is in the Model class, however the specific Model object from View needs
-	 * 		  to be manipulated.
-	 */
-	public void clueCreate(JPanel panel,Border border, boolean top, Controller buttons, Model model) {
-		if(top==true) {
-		for(int i = 0;i<5;i++) {
-			buttons.myView.getTopLabels()[i]=new JLabel();
-			buttons.myView.getTopLabels()[i].setForeground(Color.BLACK);
-			buttons.myView.getTopLabels()[i].setFont(new Font("Arial", Font.PLAIN, 40));
-			buttons.myView.getTopLabels()[i].setHorizontalAlignment(JLabel.CENTER);
-			buttons.myView.getTopLabels()[i].setBorder(border);
-			buttons.myView.getTopLabels()[i].setText(buttons.clueNum(true, i, model.getPlayGrid()));
-			panel.add(buttons.myView.getTopLabels()[i]);
-			}
-		}else{
-		for(int i = 0;i<5;i++) {
-			buttons.myView.getLeftLabels()[i]=new JLabel();
-			buttons.myView.getLeftLabels()[i].setForeground(Color.BLACK);
-			buttons.myView.getLeftLabels()[i].setFont(new Font("Arial", Font.PLAIN, 40));
-			buttons.myView.getLeftLabels()[i].setHorizontalAlignment(JLabel.CENTER);
-			buttons.myView.getLeftLabels()[i].setBorder(border);
-			buttons.myView.getLeftLabels()[i].setText(buttons.clueNum(false, i, model.getPlayGrid()));
-			panel.add(buttons.myView.getLeftLabels()[i]);
-			}
-		}
-	}
 
 	/**
 	 * Called by View to create 'Score' area on the play board.
